@@ -1,3 +1,4 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <?php
 include_once("functions/string.func.php");
 include_once("functions/date.func.php");
@@ -146,6 +147,13 @@ if(empty($t))
   #table-bpp-jenis-pembangkit tbody tr {
     cursor: pointer;
 }
+  .btn-export {
+      background: #2f80ed;
+      color: white;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 5px;
+  }
 </style>
 
 <script src="lib/highcarts-baru/highcharts.js"></script>
@@ -184,6 +192,12 @@ if(empty($t))
                 <li class="active"><a href="#tab1" data-toggle="tab">BPP Per Jenis Pembangkit</a></li>
                 <li><a href="app/index/bpp_per_mesin_tab2?b=<?=$b?>&t=<?=$t?>">BPP Per Unit Pembangkit</a></li>
                 <li><a href="app/index/bpp_per_mesin_tab3?b=<?=$b?>&t=<?=$t?>">BPP Per Mesin Pembangkit</a></li>
+                <li><a href="app/index/bpp_per_mesin_tab4?b=<?=$b?>&t=<?=$t?>">BPP Per Regional & Direktorat </a></li>
+                <div style="width: 10%;float: right;">
+                  <button onclick="exportTableToExcel()" class="btn-export">
+                      <i class="fa fa-file-excel-o"></i> Export Excel
+                  </button>
+                </div>
               </ul>
 
               <div class="tab-content">
@@ -694,4 +708,227 @@ function getColumnDefs() {
     });
   }
 
+function exportTableToExcel() {
+
+    // =========================================
+    // VALIDASI XLSX
+    // =========================================
+    if (typeof XLSX === 'undefined') {
+        alert('Library XLSX belum dimuat');
+        return;
+    }
+
+    // =========================================
+    // WORKBOOK
+    // =========================================
+    var wb = XLSX.utils.book_new();
+
+    // =========================================
+    // PERIODE
+    // =========================================
+    var bulan = $("#bln option:selected").text();
+    var tahun = $("#thn").val();
+
+    var today = new Date();
+
+    var tanggalCetak = today.toLocaleDateString('id-ID');
+
+    // =========================================
+    // STYLE HELPER
+    // =========================================
+    function styleSheet(ws, totalCol, totalRow) {
+
+        // merge title
+        ws['!merges'] = [
+            {
+                s: { r:0, c:0 },
+                e: { r:0, c:totalCol-1 }
+            }
+        ];
+
+        // freeze header
+        ws['!freeze'] = {
+            xSplit: 0,
+            ySplit: 5
+        };
+
+        // auto width
+        var cols = [];
+
+        for (var i = 0; i < totalCol; i++) {
+            cols.push({ wch: 25 });
+        }
+
+        ws['!cols'] = cols;
+
+        // style semua cell
+        for (var R = 0; R <= totalRow; ++R) {
+
+            for (var C = 0; C < totalCol; ++C) {
+
+                var cellAddress = XLSX.utils.encode_cell({
+                    r: R,
+                    c: C
+                });
+
+                if (!ws[cellAddress]) continue;
+
+                ws[cellAddress].s = {
+
+                    border: {
+                        top:    { style: "thin" },
+                        bottom: { style: "thin" },
+                        left:   { style: "thin" },
+                        right:  { style: "thin" }
+                    },
+
+                    alignment: {
+                        vertical: "center",
+                        horizontal: R <= 3 ? "center" : "left",
+                        wrapText: true
+                    },
+
+                    font: {
+                        name: "Arial",
+                        sz: 10
+                    }
+                };
+
+                // title
+                if (R === 0) {
+                    ws[cellAddress].s.font = {
+                        bold: true,
+                        sz: 16,
+                        name: "Arial"
+                    };
+                }
+
+                // subtitle
+                if (R === 1 || R === 2) {
+                    ws[cellAddress].s.font = {
+                        bold: true,
+                        sz: 11,
+                        name: "Arial"
+                    };
+                }
+
+                // header tabel
+                if (R === 4) {
+
+                    ws[cellAddress].s.font = {
+                        bold: true,
+                        color: { rgb: "FFFFFF" }
+                    };
+
+                    ws[cellAddress].s.fill = {
+                        fgColor: {
+                            rgb: "1F4E78"
+                        }
+                    };
+
+                    ws[cellAddress].s.alignment = {
+                        horizontal: "center",
+                        vertical: "center"
+                    };
+                }
+            }
+        }
+    }
+
+    // =========================================
+    // GENERATE SHEET
+    // =========================================
+    function createSheet(
+        tableId,
+        sheetName,
+        titleText
+    ) {
+
+        var table = $(tableId).DataTable();
+
+        var data = [];
+
+        // title
+        data.push([titleText]);
+        data.push(['Periode : ' + bulan + ' ' + tahun]);
+        data.push(['Tanggal Cetak : ' + tanggalCetak]);
+        data.push([]);
+
+        // =====================================
+        // HEADER
+        // =====================================
+        var headers = [];
+
+        $(tableId + ' thead th').each(function () {
+            headers.push($(this).text().trim());
+        });
+
+        data.push(headers);
+
+        // =====================================
+        // BODY
+        // =====================================
+        table.rows({ search: 'applied' }).every(function () {
+
+            var row = this.data();
+
+            var arr = [];
+
+            for (var i = 0; i < row.length; i++) {
+
+                var cell = $('<div>')
+                    .html(row[i])
+                    .text()
+                    .trim();
+
+                arr.push(cell);
+            }
+
+            data.push(arr);
+        });
+
+        // =====================================
+        // SHEET
+        // =====================================
+        var ws = XLSX.utils.aoa_to_sheet(data);
+
+        styleSheet(
+            ws,
+            headers.length,
+            data.length
+        );
+
+        XLSX.utils.book_append_sheet(
+            wb,
+            ws,
+            sheetName
+        );
+    }
+
+    // =========================================
+    // SHEET 1
+    // =========================================
+    createSheet(
+        '#table-bpp-jenis-pembangkit',
+        'Jenis Pembangkit',
+        'LAPORAN BPP PER JENIS PEMBANGKIT'
+    );
+
+    // =========================================
+    // SHEET 2
+    // =========================================
+    createSheet(
+        '#table-bpp-jenis-bahan-bakar',
+        'Jenis Bahan Bakar',
+        'LAPORAN BPP JENIS BAHAN BAKAR'
+    );
+
+    // =========================================
+    // EXPORT
+    // =========================================
+    XLSX.writeFile(
+        wb,
+        'Laporan BPP Per Jenis Pembangkit.xlsx'
+    );
+}
 </script>

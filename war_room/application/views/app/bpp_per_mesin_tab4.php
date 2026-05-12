@@ -145,8 +145,8 @@ if(empty($t))
               <ul class="nav nav-tabs nav-tabs-pln">
                 <li><a href="app/index/bpp_per_mesin?b=<?=$b?>&t=<?=$t?>">BPP Per Jenis Pembangkit</a></li>
                 <li><a href="app/index/bpp_per_mesin_tab2?b=<?=$b?>&t=<?=$t?>">BPP Per Unit Pembangkit</a></li>
-                <li class="active"><a>BPP Per Mesin Pembangkit</a></li>
-                <li><a href="app/index/bpp_per_mesin_tab4?b=<?=$b?>&t=<?=$t?>">BPP Per Regional & Direktorat </a></li>
+                <li><a href="app/index/bpp_per_mesin_tab3?b=<?=$b?>&t=<?=$t?>">BPP Per Mesin Pembangkit</a></li>
+                <li class="active"><a>BPP Per Regional & Direktorat </a></li>
                 <div style="width: 10%;float: right;">
                   <button onclick="exportTableToExcel()" class="btn-export">
                       <i class="fa fa-file-excel-o"></i> Export Excel
@@ -160,7 +160,7 @@ if(empty($t))
                     <div class="col-md-12">
                       <div class="area-tabel tabel-hpp">
                         <div class="judul-tabel">
-                          BPP Per Mesin Pembangkit (Rp)
+                          BPP Per Regional & Direktorat 
                           <button class="pull-right openModalBtn4" data-target="#modal4" style="background-color:transparent;border:none;">
                             <i class="fa fa-search-plus"></i>
                           </button>
@@ -170,10 +170,7 @@ if(empty($t))
                           <thead>
                             <tr>
                               <th>No</th>
-                              <th>Nama Pembangkit (SESUAI SILM)</th>
-                              <th>Distrik</th>
-                              <th>Jenis Pembangkit</th>
-                              <th>Bahan Bakar Utama</th>
+                              <th>Direktorat</th>
                               <th>Daya Terpasang (kW)</th>
                               <th>kWh Netto (SILM) s.d bulan berjalan</th>
                               <th>Total BPP (Rp/kWh)</th>
@@ -203,10 +200,7 @@ if(empty($t))
                               <thead>
                                 <tr>
                                   <th>No</th>
-                                  <th>Nama Pembangkit (SESUAI SILM)</th>
-                                  <th>Distrik</th>
-                                  <th>Jenis Pembangkit</th>
-                                  <th>Bahan Bakar Utama</th>
+                                  <th>Direktorat</th>
                                   <th>Daya Terpasang (kW)</th>
                                   <th>kWh Netto (SILM) s.d bulan berjalan</th>
                                   <th>Total BPP (Rp/kWh)</th>
@@ -331,7 +325,7 @@ function dataJsonPerMesinPembangkit() {
   cleardttable('table-bpp-mesin-pembangkit-modal');
 
   $.ajax({
-    url: 'json-api/Etl_dashboard_ditop_json/home?b=' + bln + '&t=' + thn + '&mode=bpp_per_mesin',
+    url: 'json-api/Etl_dashboard_ditop_json/home?b=' + bln + '&t=' + thn + '&mode=direktorat,regional',
     type: 'GET',
     dataType: 'json',
     success: function(jsonData) {
@@ -427,7 +421,7 @@ function exportTableToExcel() {
 
     var a = document.createElement('a');
     a.href = url;
-    a.download = 'Laporan BPP Per Mesin.xls';
+    a.download = 'Laporan Bpp Per Regional & Direktorat.xls';
     a.click();
 }
 </script>

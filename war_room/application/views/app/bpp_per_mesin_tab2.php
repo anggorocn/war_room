@@ -181,6 +181,13 @@ if(empty($t))
   .dataTables_wrapper {
     width: 100% !important;
   }
+  .btn-export {
+      background: #2f80ed;
+      color: white;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 5px;
+  }
 </style>
 
 
@@ -220,6 +227,12 @@ if(empty($t))
                 <li><a href="app/index/bpp_per_mesin?b=<?=$b?>&t=<?=$t?>">BPP Per Jenis Pembangkit</a></li>
                 <li class="active"><a href="app/index/bpp_per_mesin_tab2?b=<?=$b?>&t=<?=$t?>">BPP Per Unit Pembangkit</a></li>
                 <li><a href="app/index/bpp_per_mesin_tab3?b=<?=$b?>&t=<?=$t?>">BPP Per Mesin Pembangkit</a></li>
+                <li><a href="app/index/bpp_per_mesin_tab4?b=<?=$b?>&t=<?=$t?>">BPP Per Regional & Direktorat </a></li>
+                <div style="width: 10%;float: right;">
+                  <button onclick="exportTableToExcel()" class="btn-export">
+                      <i class="fa fa-file-excel-o"></i> Export Excel
+                  </button>
+                </div>
               </ul>
 
               <div class="tab-content">
@@ -665,4 +678,141 @@ if(empty($t))
     });
   }
 
+function exportTableToExcel() {
+
+    var table = $('#table-bpp-per-unit-pembangkit').DataTable();
+
+    // ambil header
+    var headers = [];
+    $('#table-bpp-per-unit-pembangkit thead th').each(function () {
+        headers.push($(this).text().trim());
+    });
+
+    // ambil data row
+    var rows = table.rows({ search: 'applied' }).data();
+
+    // periode
+    var bulan = $("#bln option:selected").text();
+    var tahun = $("#thn").val();
+
+    // tanggal cetak
+    var today = new Date();
+    var tanggalCetak = today.toLocaleDateString('id-ID');
+
+    // mulai html
+    var html = `
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+
+            body{
+                font-family: Arial;
+                font-size: 12px;
+            }
+
+            .title{
+                font-size: 18px;
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 5px;
+            }
+
+            .subtitle{
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            table{
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            th{
+                background: #d9d9d9;
+                font-weight: bold;
+                text-align: center;
+            }
+
+            th, td{
+                border: 1px solid #000;
+                padding: 5px;
+            }
+
+        </style>
+    </head>
+
+    <body>
+
+        <div class="title">
+            LAPORAN BPP PER UNIT PEMBANGKIT
+        </div>
+
+        <div class="subtitle">
+            Periode : ${bulan} ${tahun}
+            <br>
+            Tanggal Cetak : ${tanggalCetak}
+        </div>
+
+        <table>
+
+            <thead>
+                <tr>
+    `;
+
+    // render header
+    headers.forEach(function (header) {
+        html += `<th>${header}</th>`;
+    });
+
+    html += `
+                </tr>
+            </thead>
+
+            <tbody>
+    `;
+
+    // render body
+    rows.each(function (row) {
+
+        html += `<tr>`;
+
+        for (var i = 0; i < row.length; i++) {
+
+            var cell = row[i];
+
+            // hapus html tag
+            cell = $('<div>').html(cell).text();
+
+            html += `<td>${cell}</td>`;
+        }
+
+        html += `</tr>`;
+    });
+
+    html += `
+            </tbody>
+
+        </table>
+
+    </body>
+    </html>
+    `;
+
+    // export excel
+    var blob = new Blob(
+        [html],
+        {
+            type: 'application/vnd.ms-excel'
+        }
+    );
+
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'Laporan BPP Per Unit Pembangkit.xls';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 </script>
