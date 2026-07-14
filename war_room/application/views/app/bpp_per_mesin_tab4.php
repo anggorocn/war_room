@@ -171,6 +171,7 @@ if(empty($t))
                             <tr>
                               <th>No</th>
                               <th>Direktorat</th>
+                              <th>Regional</th>
                               <th>Daya Terpasang (kW)</th>
                               <th>kWh Netto (SILM) s.d bulan berjalan</th>
                               <th>Total BPP (Rp/kWh)</th>
@@ -201,6 +202,7 @@ if(empty($t))
                                 <tr>
                                   <th>No</th>
                                   <th>Direktorat</th>
+                                  <th>Regional</th>
                                   <th>Daya Terpasang (kW)</th>
                                   <th>kWh Netto (SILM) s.d bulan berjalan</th>
                                   <th>Total BPP (Rp/kWh)</th>
@@ -325,7 +327,7 @@ function dataJsonPerMesinPembangkit() {
   cleardttable('table-bpp-mesin-pembangkit-modal');
 
   $.ajax({
-    url: 'json-api/Etl_dashboard_ditop_json/home?b=' + bln + '&t=' + thn + '&mode=direktorat,regional',
+    url: 'json-api/Etl_dashboard_ditop_json/home?b=' + bln + '&t=' + thn + '&mode=direktorat,region',
     type: 'GET',
     dataType: 'json',
     success: function(jsonData) {

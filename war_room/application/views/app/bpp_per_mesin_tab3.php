@@ -172,6 +172,7 @@ if(empty($t))
                               <th>No</th>
                               <th>Nama Pembangkit (SESUAI SILM)</th>
                               <th>Distrik</th>
+                              <th>Regional</th>
                               <th>Jenis Pembangkit</th>
                               <th>Bahan Bakar Utama</th>
                               <th>Daya Terpasang (kW)</th>
@@ -199,12 +200,13 @@ if(empty($t))
                           <div class="modal-content-custom">
                             <span class="closeModal">&times;</span>
                             <h3>BPP Per Mesin Pembangkit (Rp)</h3>
-                            <table id="table-bpp-mesin-pembangkit-modal" class="display table table-customize" style="width:300vw">
+                            <table id="table-bpp-mesin-pembangkit-modal" class="display table table-customize" style="width:100%">
                               <thead>
                                 <tr>
-                                  <th>No</th>
+                                  <th style="width:3%">No</th>
                                   <th>Nama Pembangkit (SESUAI SILM)</th>
                                   <th>Distrik</th>
+                                  <th>Regional</th>
                                   <th>Jenis Pembangkit</th>
                                   <th>Bahan Bakar Utama</th>
                                   <th>Daya Terpasang (kW)</th>
