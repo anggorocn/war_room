@@ -34,15 +34,25 @@ if(empty($t))
      HEADER & BODY KOLOM
      JANGAN override width DataTables di sini!
   ============================================= */
-  #table-bpp-mesin-pembangkit thead th {
+  #table-bpp-mesin-pembangkit thead th,
+  #table-bpp-mesin-pembangkit-modal thead th {
     white-space: normal !important;
     word-wrap: break-word;
     vertical-align: middle;
     text-align: center;
   }
 
-  #table-bpp-mesin-pembangkit tbody td {
+  #table-bpp-mesin-pembangkit tbody td,
+  #table-bpp-mesin-pembangkit-modal tbody td {
     white-space: nowrap;
+  }
+
+  /* modal-body putih -- teks tbody & label Search dipaksa hitam biar kebaca
+     (beda dari halaman utama yg bg-nya gelap jadi teks putih pas di sana). */
+  #table-bpp-mesin-pembangkit-modal tbody td,
+  #table-bpp-mesin-pembangkit-modal_wrapper .dataTables_filter label,
+  #table-bpp-mesin-pembangkit-modal_wrapper .dataTables_info {
+    color: #000;
   }
 
   #table-bpp-mesin-pembangkit tfoot th,
@@ -51,30 +61,55 @@ if(empty($t))
   }
 
   /* =============================================
-     MODAL
+     MODAL FULL HEIGHT (flexbox) -- modal-dialog makein tinggi viewport,
+     table-scroll-wrap ngisi sisa ruang yg ada, bukan angka calc() ke-nebak.
   ============================================= */
-  .modal-custom {
-    display: none;
-    position: fixed;
-    z-index: 9999;
-    left: 0;
+  #modal4 .modal-dialog {
+    width: 95%;
+    height: 90vh;
+    margin: 5vh auto;
+  }
+  #modal4 .modal-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  #modal4 .modal-body {
+    flex: 1 1 auto;
+    min-height: 0; /* wajib biar flex child bisa scroll, bukan malah ngedorong tinggi */
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* =============================================
+     SCROLL NATIVE buat tabel modal (bukan scrollX/scrollY DataTables)
+     -- 1 tabel fisik, header nempel ke body-nya sendiri, gak mungkin geser.
+  ============================================= */
+  .table-scroll-wrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  #table-bpp-mesin-pembangkit-modal thead th {
+    position: sticky;
     top: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.5);
+    z-index: 2;
+    /* background/color IKUT style default app (.area-tabel.tabel-hpp .table-customize
+       thead th di gaya.css) -- class-nya ditempel di wrapper .table-scroll-wrap,
+       biar konsisten sama tabel lain, gak perlu hardcode warna di sini. */
   }
 
-  .modal-content-custom {
-    background: #fff;
-    padding: 20px;
-    margin: 15px;
-    border-radius: 8px;
-  }
-
-  .closeModal {
-    float: right;
-    font-size: 22px;
-    cursor: pointer;
+  /* baris TOTAL (tfoot) nempel di bawah pas scroll, kayak header nempel di atas.
+     background solid wajib -- gaya.css pake rgba tembus pandang buat tfoot,
+     kalo sticky konten yg discroll bakal keliatan numpuk transparan di baliknya. */
+  #table-bpp-mesin-pembangkit-modal tfoot th,
+  #table-bpp-mesin-pembangkit-modal tfoot td {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    background-color: #d9d9d9 !important;
+    color: #000 !important;
   }
 
   table.display.table.table-customize.dataTable.no-footer th {
@@ -195,38 +230,46 @@ if(empty($t))
                           <tfoot></tfoot>
                         </table>
 
-                        <!-- MODAL -->
-                        <div id="modal4" class="modal-custom">
-                          <div class="modal-content-custom">
-                            <span class="closeModal">&times;</span>
-                            <h3>BPP Per Mesin Pembangkit (Rp)</h3>
-                            <table id="table-bpp-mesin-pembangkit-modal" class="display table table-customize" style="width:100%">
-                              <thead>
-                                <tr>
-                                  <th style="width:3%">No</th>
-                                  <th>Nama Pembangkit (SESUAI SILM)</th>
-                                  <th>Distrik</th>
-                                  <th>Regional</th>
-                                  <th>Jenis Pembangkit</th>
-                                  <th>Bahan Bakar Utama</th>
-                                  <th>Daya Terpasang (kW)</th>
-                                  <th>kWh Netto (SILM) s.d bulan berjalan</th>
-                                  <th>Total BPP (Rp/kWh)</th>
-                                  <th>Total Komp ABDE (jika tdk dpt dipecah) contoh: Sewa, KIT yg Komp C passthrough</th>
-                                  <th>Total Komp ABCDE (Rp)</th>
-                                  <th>Total Komp A (Rp)</th>
-                                  <th>Total Komp B (Rp)</th>
-                                  <th>Total Komp C (Rp)</th>
-                                  <th>Total Komp D (Rp)</th>
-                                  <th>BPP Komp A (Rp/kWh)</th>
-                                  <th>BPP Komp B (Rp/kWh)</th>
-                                  <th>BPP Komp C (Rp/kWh)</th>
-                                  <th>BPP Komp D (Rp/kWh)</th>
-                                </tr>
-                              </thead>
-                              <tbody></tbody>
-                              <tfoot></tfoot>
-                            </table>
+                        <!-- MODAL (Bootstrap Modal) -->
+                        <div class="modal fade" id="modal4" tabindex="-1" role="dialog">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h3 class="modal-title">BPP Per Mesin Pembangkit (Rp)</h3>
+                              </div>
+                              <div class="modal-body">
+                                <div class="area-tabel tabel-hpp table-scroll-wrap">
+                                <table id="table-bpp-mesin-pembangkit-modal" class="display table table-customize" style="width:100%">
+                                  <thead>
+                                    <tr>
+                                      <th>No</th>
+                                      <th>Nama Pembangkit (SESUAI SILM)</th>
+                                      <th>Distrik</th>
+                                      <th>Regional</th>
+                                      <th>Jenis Pembangkit</th>
+                                      <th>Bahan Bakar Utama</th>
+                                      <th>Daya Terpasang (kW)</th>
+                                      <th>kWh Netto (SILM) s.d bulan berjalan</th>
+                                      <th>Total BPP (Rp/kWh)</th>
+                                      <th>Total Komp ABDE (jika tdk dpt dipecah) contoh: Sewa, KIT yg Komp C passthrough</th>
+                                      <th>Total Komp ABCDE (Rp)</th>
+                                      <th>Total Komp A (Rp)</th>
+                                      <th>Total Komp B (Rp)</th>
+                                      <th>Total Komp C (Rp)</th>
+                                      <th>Total Komp D (Rp)</th>
+                                      <th>BPP Komp A (Rp/kWh)</th>
+                                      <th>BPP Komp B (Rp/kWh)</th>
+                                      <th>BPP Komp C (Rp/kWh)</th>
+                                      <th>BPP Komp D (Rp/kWh)</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody></tbody>
+                                  <tfoot></tfoot>
+                                </table>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                         <!-- END MODAL -->
@@ -256,6 +299,21 @@ if(empty($t))
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 <script>
+var modalDataMesin = null;
+
+// width px per kolom, urutan sesuai <th> (No, Nama, Distrik, Regional, ...)
+var COLUMN_WIDTHS = [40, 180, 90, 80, 80, 90, 100, 110, 90, 160, 110, 110, 110, 110, 110, 90, 90, 90, 90];
+
+// kunci min-width tiap kolom lewat DataTables API (bukan CSS selector manual)
+// -- api.column(i).header()/.nodes() otomatis nunjuk elemen yg BENERAN kepake
+// (DataTables clone thead ke tabel terpisah pas scrollX aktif, id/class asli gak ikut ke-clone).
+function applyMinWidths(api) {
+  COLUMN_WIDTHS.forEach(function(w, i) {
+    $(api.column(i).header()).css('min-width', w + 'px');
+    $(api.column(i).nodes()).css('min-width', w + 'px');
+  });
+}
+
 $(document).ready(function() {
 
   bln = parseInt($("#bln").val());
@@ -264,17 +322,48 @@ $(document).ready(function() {
   dataJsonPerMesinPembangkit();
 
   // =============================================
-  // MODAL: buka
+  // MODAL: buka (Bootstrap Modal)
+  // Init/refresh DataTable modal di 'shown.bs.modal' -- event Bootstrap yg
+  // fire PAS modal beneran full visible, bukan nebak pake setTimeout.
   // =============================================
   $('.openModalBtn4').click(function() {
-    $('#modal4').fadeIn();
+    $('#modal4').modal('show');
   });
 
-  // =============================================
-  // MODAL: tutup
-  // =============================================
-  $('.closeModal').click(function() {
-    $('#modal4').fadeOut();
+  $('#modal4').on('shown.bs.modal', function() {
+    if (!modalDataMesin) return;
+
+    if ($.fn.DataTable.isDataTable('#table-bpp-mesin-pembangkit-modal')) {
+      var apiModal = $('#table-bpp-mesin-pembangkit-modal').DataTable();
+      apiModal.columns.adjust();
+      applyMinWidths(apiModal);
+    } else {
+      $('#table-bpp-mesin-pembangkit-modal tfoot').html(modalDataMesin.tabelFoot2);
+      $('#table-bpp-mesin-pembangkit-modal tbody').html(modalDataMesin.tabel2);
+
+      $('#table-bpp-mesin-pembangkit-modal').DataTable({
+        searching:     true,
+        ordering:      true,
+        lengthChange:  false,
+        paging:        false,
+        // scrollX/scrollY/scrollCollapse SENGAJA gak dipake -- itu yg bikin DataTables
+        // clone tabel jadi 2 (header terpisah dari body) dan gampang geser.
+        // Scroll + sticky header sekarang murni CSS (.table-scroll-wrap), 1 tabel fisik.
+        autoWidth:     false,  // width dikunci lewat columnDefs (getColumnDefs), jangan dihitung ulang
+        columnDefs:    getColumnDefs(),
+        initComplete:  function() {
+          var api = this.api();
+          api.columns.adjust();
+          applyMinWidths(api);
+
+          // Kotak Search DataTables ke-render DI DALAM .table-scroll-wrap (ikut
+          // posisi <table> asli), jadi ikut ke-scroll pas isi tabel discroll.
+          // Pindahin ke luar wrapper biar nempel di atas, gak geser.
+          var $filter = $('#table-bpp-mesin-pembangkit-modal_wrapper .dataTables_filter');
+          $filter.insertBefore($filter.closest('.table-scroll-wrap'));
+        }
+      });
+    }
   });
 
 });
@@ -304,7 +393,11 @@ function cleardttable(id) {
 // HELPER: konfigurasi columnDefs sorting
 // =============================================
 function getColumnDefs() {
-  return [
+  // Wajib pakai columnDefs, bukan style="width:%" di HTML -- DataTables
+  // scrollX ngukur ulang sendiri via clone dan ABAIKAN width HTML, jadi kolom
+  // dengan header teks panjang (mis. "Total Komp ABDE (...)") bikin ukurannya
+  // meleset jauh dari kolom lain kalau cuma dikasih width HTML.
+  var defs = [
     {
       targets: '_all',
       render: function(data, type) {
@@ -323,6 +416,12 @@ function getColumnDefs() {
       }
     }
   ];
+
+  COLUMN_WIDTHS.forEach(function(w, i) {
+    defs.push({ targets: i, width: w + 'px' });
+  });
+
+  return defs;
 }
 
 // =============================================
@@ -353,43 +452,21 @@ function dataJsonPerMesinPembangkit() {
         scrollY:       "calc(100vh - 470px)",
         scrollCollapse: true,
         paging:        false,
-        autoWidth:     true,   // biarkan DataTables hitung otomatis
+        autoWidth:     false,  // width dikunci lewat columnDefs (getColumnDefs), jangan dihitung ulang
         columnDefs:    getColumnDefs(),
         initComplete:  function() {
-          this.api().columns.adjust(); // sinkronkan header & body setelah render
+          var api = this.api();
+          api.columns.adjust();
+          applyMinWidths(api);
         }
       });
 
       // -----------------------------------------
-      // Tabel modal
+      // Tabel modal: simpan data, JANGAN init DataTable sekarang.
+      // Modal masih display:none -> width kolom kehitung 0, header
+      // vs body jadi geser. Init baru dilakukan saat modal dibuka.
       // -----------------------------------------
-      $('#table-bpp-mesin-pembangkit-modal tfoot').html(jsonData.tabelFoot2);
-      $('#table-bpp-mesin-pembangkit-modal tbody').html(jsonData.tabel2);
-
-      $('#table-bpp-mesin-pembangkit-modal').DataTable({
-        searching:     true,
-        ordering:      true,
-        lengthChange:  false,
-        scrollX:       true,
-        scrollY:       "calc(100vh - 470px)",
-        scrollCollapse: true,
-        paging:        false,
-        autoWidth:     true,
-        columnDefs:    getColumnDefs(),
-        initComplete:  function() {
-          this.api().columns.adjust();
-        }
-      });
-
-      // adjust ulang tabel modal saat modal dibuka
-      // (karena saat init modal masih display:none)
-      $('.openModalBtn4').off('click.dtadjust').on('click.dtadjust', function() {
-        setTimeout(function() {
-          if ($.fn.DataTable.isDataTable('#table-bpp-mesin-pembangkit-modal')) {
-            $('#table-bpp-mesin-pembangkit-modal').DataTable().columns.adjust();
-          }
-        }, 300);
-      });
+      modalDataMesin = { tabel2: jsonData.tabel2, tabelFoot2: jsonData.tabelFoot2 };
 
       $('#vlsxloading').hide();
     },

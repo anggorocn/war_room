@@ -351,45 +351,45 @@ class Etl_dashboard_ditop_json extends CI_Controller {
                     else{
                         $tabel2.='
                             <tr>
-                                <td style="width:3%">'.$no.'</td>
+                                <td>'.$no.'</td>
 
-                                <td style="width:18%">'.$set['data'][$i]['kunit_nama'].' '.$set['data'][$i]['unit_kode'].'</td>
+                                <td>'.$set['data'][$i]['kunit_nama'].' '.$set['data'][$i]['unit_kode'].'</td>
 
-                                <td style="width:10%">'.$set['data'][$i]['distrik_nama'].'</td>
-                                <td style="width:10%">'.$set['data'][$i]['region'].'</td>
+                                <td>'.$set['data'][$i]['distrik_nama'].'</td>
+                                <td>'.$set['data'][$i]['region'].'</td>
 
-                                <td style="width:10%">'.$set['data'][$i]['jenis_pembangkit'].'</td>
-                                <td style="width:10%">'.$set['data'][$i]['jenis_bahan_bakar'].'</td>
-                                <td style="width:6%; text-align:right">'.numberformatnew($set['data'][$i]['daya_terpasang_bulan']).'</td>
-                                <td style="width:6%; text-align:right">'.numberformatnew($set['data'][$i]['kwh_netto_ytd']).'</td>
-                                <td style="width:6%; text-align:right">'.numberformatnew($set['data'][$i]['bpp_ytd']).'</td>
+                                <td>'.$set['data'][$i]['jenis_pembangkit'].'</td>
+                                <td>'.$set['data'][$i]['jenis_bahan_bakar'].'</td>
+                                <td style="text-align:right">'.numberformatnew($set['data'][$i]['daya_terpasang_bulan']).'</td>
+                                <td style="text-align:right">'.numberformatnew($set['data'][$i]['kwh_netto_ytd']).'</td>
+                                <td style="text-align:right">'.numberformatnew($set['data'][$i]['bpp_ytd']).'</td>
 
-                                <td style="width:5%; text-align:right">'.numberformatnew($abde).'</td>
+                                <td style="text-align:right">'.numberformatnew($abde).'</td>
 
-                                <td style="width:5%; text-align:right">'.numberformatnew($abcde).'</td>
-
-
+                                <td style="text-align:right">'.numberformatnew($abcde).'</td>
 
 
-                                <td style="width:4%; text-align:right">'.numberformatnew($set['data'][$i]['komp_a_ytd']).'</td>
 
-                                <td style="width:4%; text-align:right">'.numberformatnew($set['data'][$i]['komp_b_ytd']).'</td>
 
-                                <td style="width:4%; text-align:right">'.numberformatnew($set['data'][$i]['komp_c_ytd']).'</td>
+                                <td style="text-align:right">'.numberformatnew($set['data'][$i]['komp_a_ytd']).'</td>
 
-                                <td style="width:4%; text-align:right">'.numberformatnew($set['data'][$i]['komp_d_ytd']).'</td>
+                                <td style="text-align:right">'.numberformatnew($set['data'][$i]['komp_b_ytd']).'</td>
 
-                                <td style="width:3%; text-align:right">'.numberformatnew($bpp_komp_a).'</td>
+                                <td style="text-align:right">'.numberformatnew($set['data'][$i]['komp_c_ytd']).'</td>
 
-                                <td style="width:3%; text-align:right">'.numberformatnew($bpp_komp_b).'</td>
+                                <td style="text-align:right">'.numberformatnew($set['data'][$i]['komp_d_ytd']).'</td>
 
-                                <td style="width:3%; text-align:right">'.numberformatnew($bpp_komp_c).'</td>
+                                <td style="text-align:right">'.numberformatnew($bpp_komp_a).'</td>
 
-                                <td style="width:3%; text-align:right">'.numberformatnew($bpp_komp_d).'</td>
+                                <td style="text-align:right">'.numberformatnew($bpp_komp_b).'</td>
+
+                                <td style="text-align:right">'.numberformatnew($bpp_komp_c).'</td>
+
+                                <td style="text-align:right">'.numberformatnew($bpp_komp_d).'</td>
                             </tr>
-                        ';     
+                        ';
                         $no++;
-                    }  
+                    }
                 }
                 if($set['data'][$i]['direktorat']=='GRAND TOTAL')
                 {
@@ -431,33 +431,33 @@ class Etl_dashboard_ditop_json extends CI_Controller {
                     {
                         $tabelFoot2='
                         <tr>
-                            <th colspan="6" style="width:61%">TOTAL</th>
+                            <th colspan="6">TOTAL</th>
 
-                            <th style="width:6%; text-align:right">'.numberformatnew($set['data'][$i]['daya_terpasang_bulan']).'</th>
+                            <th style="text-align:right">'.numberformatnew($set['data'][$i]['daya_terpasang_bulan']).'</th>
 
-                            <th style="width:6%; text-align:right">'.numberformatnew($set['data'][$i]['kwh_netto_ytd']).'</th>
+                            <th style="text-align:right">'.numberformatnew($set['data'][$i]['kwh_netto_ytd']).'</th>
 
-                            <th style="width:6%; text-align:right">'.numberformatnew($set['data'][$i]['bpp_ytd']).'</th>
+                            <th style="text-align:right">'.numberformatnew($set['data'][$i]['bpp_ytd']).'</th>
 
-                            <th style="width:5%; text-align:right">'.numberformatnew($abde).'</th>
+                            <th style="text-align:right">'.numberformatnew($abde).'</th>
 
-                            <th style="width:5%; text-align:right">'.numberformatnew($abcde).'</th>
+                            <th style="text-align:right">'.numberformatnew($abcde).'</th>
 
-                            <th style="width:4%; text-align:right">'.numberformatnew($set['data'][$i]['komp_a_ytd']).'</th>
+                            <th style="text-align:right">'.numberformatnew($set['data'][$i]['komp_a_ytd']).'</th>
 
-                            <th style="width:4%; text-align:right">'.numberformatnew($set['data'][$i]['komp_b_ytd']).'</th>
+                            <th style="text-align:right">'.numberformatnew($set['data'][$i]['komp_b_ytd']).'</th>
 
-                            <th style="width:4%; text-align:right">'.numberformatnew($set['data'][$i]['komp_c_ytd']).'</th>
+                            <th style="text-align:right">'.numberformatnew($set['data'][$i]['komp_c_ytd']).'</th>
 
-                            <th style="width:4%; text-align:right">'.numberformatnew($set['data'][$i]['komp_d_ytd']).'</th>
+                            <th style="text-align:right">'.numberformatnew($set['data'][$i]['komp_d_ytd']).'</th>
 
-                            <th style="width:3%; text-align:right">'.numberformatnew($bpp_komp_a).'</th>
+                            <th style="text-align:right">'.numberformatnew($bpp_komp_a).'</th>
 
-                            <th style="width:3%; text-align:right">'.numberformatnew($bpp_komp_b).'</th>
+                            <th style="text-align:right">'.numberformatnew($bpp_komp_b).'</th>
 
-                            <th style="width:3%; text-align:right">'.numberformatnew($bpp_komp_c).'</th>
+                            <th style="text-align:right">'.numberformatnew($bpp_komp_c).'</th>
 
-                            <th style="width:3%; text-align:right">'.numberformatnew($bpp_komp_d).'</th>
+                            <th style="text-align:right">'.numberformatnew($bpp_komp_d).'</th>
                         </tr>
                         ';
                     }
